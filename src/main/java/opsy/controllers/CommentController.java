@@ -68,7 +68,6 @@ public class CommentController {
         modelAndView.addObject("article", article);
         List<aComments> list = commentsRepository.findAllByArticle(id);
         modelAndView.addObject("comments", list);
-        System.out.println("for commit");
         return modelAndView;
     }
 }
