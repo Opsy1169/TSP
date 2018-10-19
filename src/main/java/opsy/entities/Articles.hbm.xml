@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="opsy.entities.Articles" table="articles" schema="workingschema" catalog="blog">
+        <id name="articleId" column="article_id"/>
+        <property name="title" column="title"/>
+        <property name="publishdate" column="publishdate"/>
+        <many-to-one name="author" class="opsy.entities.Users" lazy="false" fetch="join">
+            <column name="author"/>
+        </many-to-one>
+        <property name="articleBody" column="article_body"/>
+    </class>
+</hibernate-mapping>
