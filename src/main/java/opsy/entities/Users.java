@@ -6,15 +6,27 @@ import java.util.Objects;
 @Entity
 @Table(name = "users", schema = "workingschema")
 public class Users {
+
+
     private long userId;
     private String login;
     private String password;
     private Boolean isadmin;
     private Boolean ismoder;
 
+    public Users(String login, String password, Boolean isadmin, Boolean ismoder) {
+        this.login = login;
+        this.password = password;
+        this.isadmin = isadmin;
+        this.ismoder = ismoder;
+    }
+    public Users() {
+
+    }
+
     @Id
     @Column(name = "user_id")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long getUserId() {
         return userId;
     }

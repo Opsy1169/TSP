@@ -4,13 +4,13 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
-    <class name="opsy.entities.aComments" table="comments" schema="workingschema" catalog="blog">
-        <id name="commentId" column="comment_id"/>
-        <property name="body" column="body"/>
-        <many-to-one name="authorId" class="opsy.entities.Users" lazy="false" fetch="join">
-            <column name="author_id"/>
-        </many-to-one>
-        <property name="date" column="date"/>
-        <property name="article" column="article"/>
-    </class>
+    <!--<class name="opsy.entities.Comments table="comments" schema="workingschema" catalog="blog">-->
+        <!--<id name="commentId" column="comment_id"/>-->
+        <!--<property name="body" column="body"/>-->
+        <!--<many-to-one name="authorId" class="opsy.entities.Users" lazy="false" fetch="join">-->
+            <!--<column name="author_id"/>-->
+        <!--</many-to-one>-->
+        <!--<property name="date" column="date"/>-->
+        <!--<property name="article" column="article"/>-->
+    <!--</class>-->
 </hibernate-mapping>

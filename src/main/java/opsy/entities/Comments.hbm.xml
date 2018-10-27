@@ -3,7 +3,7 @@
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="opsy.entities.Comments" schema="workingschema" table="comments" catalog="blog">
+    <class name="opsy.entities.shit" schema="workingschema" table="comments" catalog="blog">
         <id name="commentId" column="comment_id"/>
         <property name="body" column="body"/>
         <many-to-one name="authorId" class="opsy.entities.Users" lazy="false" fetch="join">
