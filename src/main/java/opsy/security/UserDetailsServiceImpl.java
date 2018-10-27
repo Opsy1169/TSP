@@ -25,6 +25,11 @@ public class UserDetailsServiceImpl  implements UserDetailsService {
     @Autowired
     private BCryptPasswordEncoder encoder;
 
+
+    /**
+     *Эту логику использует спринг внутри, чтобы проверить, есть ли такой пользователь в бд, чтобы присвоить нужные
+     * роли и т.д.
+     */
     @Transactional
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {

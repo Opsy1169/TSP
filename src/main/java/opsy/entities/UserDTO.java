@@ -4,6 +4,12 @@ package opsy.entities;
 import com.sun.istack.internal.NotNull;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+
+/**
+ * Объект, который, вроде, будет лежать в аутентификации
+ * А мб он просто используется, чтобы прочекать логин-пароль в БД
+ * Просто вспомогательный объект, чтобы не ебаться лишний раз
+ */
 public class UserDTO {
     @NotNull
     private String username;
