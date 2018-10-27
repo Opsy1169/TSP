@@ -26,6 +26,10 @@ import javax.sql.DataSource;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 
+    /**
+     * Какая-то внутренняя беда спринга для проверки паролей и запихивания Юзер-объекта
+     * в объект Аутентификации
+     */
     @Autowired
     public void registerGlobalAuthentication(AuthenticationManagerBuilder authenticationManager) throws Exception{
         authenticationManager.userDetailsService(getUserDetailsService())
@@ -33,6 +37,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
 
+    /**
+     * Конфигурационный метод, здесь указывается распределения доступа к ресурсам по ролям,
+     * адреса обработки логиа и логаута, перевод пользователя на страницы при удачном и неудачном логине
+     * Так же выставлен параметр, чтобы пользователя всегда перенаправляло на домашнюю страницу, а не на тот юрл, который
+     * он вбивал до авторизации
+     * Метод можно разбить на несколько частей(здесь уже разбито, но можно и дальше разделять его логически)
+     */
     protected void configure(HttpSecurity http) throws Exception{
         http.csrf().disable(); //.authorizeRequests().anyRequest().permitAll().and();
 
@@ -69,6 +80,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(authProvider());
     }
 
+
+    /**
+     * Какие-то проблемы возникли с внедрением бинов, поэтому эти мне пришлось убрать из основного конфиг файла в
+     * этот, благо, логика допускает
+     */
     @Bean
     public BCryptPasswordEncoder encoder(){
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(10);

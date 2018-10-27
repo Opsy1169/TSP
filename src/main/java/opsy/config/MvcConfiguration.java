@@ -44,6 +44,9 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter{
 	@Autowired
 	BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    /**
+     * Основной класс, предоставляющий доступ к вьюхам
+     */
 	@Bean
 	public ViewResolver getViewResolver(){
 		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
@@ -53,6 +56,12 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter{
 		return resolver;
 	}
 
+
+    /**
+     * Дополнительный класс, позволяющий свзяать юрл и представление
+     * Удобно, если страница отрисовывается одинаково независимо от логики
+     * и не хочется создавать для этого метод в контроллере
+     */
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
 		registry.addViewController("/usershome").setViewName("usershome");
@@ -60,11 +69,19 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter{
 		registry.addViewController("/restricted").setViewName("restricted");
 	}
 
+
+    /**
+     * Основной класс, предоставляющий доступ к ресурсам
+     */
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
 	}
 
+
+    /**
+     * Конфигурация дата сорса, здесь прописывается физический адрес БД, драйвер, логин-пароль для входа
+     */
 	@Bean(name = "dataSource")
 	public DataSource dataSource(){
 		DriverManagerDataSource ds = new DriverManagerDataSource();
@@ -83,6 +100,10 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter{
 //        return transactionManager;
 //    }
 
+    /**
+     * ДАО, для того чтобы можно было привязать ее в любом классе и иметь доступ к данным
+     * Так, например, происходит в контроллере
+     */
 	@Bean(name = "dao")
 	public DAO gatDao(){
 		return new DAO();
@@ -99,6 +120,10 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter{
 //	    return session;
 //    }
 
+
+    /**
+     * Какие-то объекты для внутренней работы репозиториев и гибернейта
+     */
     @Bean
 	public PlatformTransactionManager transactionManager(){
 		JpaTransactionManager manager =  new JpaTransactionManager();
