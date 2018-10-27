@@ -13,6 +13,13 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
 public class Initializer implements WebApplicationInitializer {
+    /**
+     * После добавления второго файла конфигурации пришлось завести такой класс
+     * Он является аналогом веб.хмл и обшего конфигурационного файла, в общем тут вообще все, кроме фильтров
+     * Фильтры, в том числе необходмый для безопасности, лежат в веб.хмл
+     * @param servletContext
+     * @throws ServletException
+     */
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
