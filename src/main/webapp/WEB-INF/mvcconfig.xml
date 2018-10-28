@@ -10,12 +10,16 @@
 
     <mvc:annotation-driven/>
     <mvc:resources mapping ="/resources/**" location="/"/>
+    <mvc:view-controller path="/adminhome" view-name="adminhome"/>
+    <mvc:view-controller path="/usershome" view-name="usershome"/>
+    <mvc:view-controller path="/restricted" view-name="restricted"/>
     <context:component-scan base-package="opsy"/>
     <beans>
         <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
             <property name="suffix" value=".jsp"/>
             <property name="prefix" value="WEB-INF/views/"/>
         </bean>
+
 
     </beans>
 

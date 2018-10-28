@@ -127,12 +127,13 @@ public class CommentController {
     /**
      * Отрисовывает страницу регистрации
      */
-    @RequestMapping(value = "/user/registration", method = RequestMethod.GET)
+    @RequestMapping(value = "/registration", method = RequestMethod.GET)
     public ModelAndView registrationRender(){
         ModelAndView modelAndView = new ModelAndView();
         UserDTO userDTO = new UserDTO();
-        modelAndView.addObject("user", userDTO);
         modelAndView.setViewName("registration");
+        modelAndView.addObject("user", userDTO);
+
         return modelAndView;
     }
 
@@ -142,7 +143,7 @@ public class CommentController {
      * Проверку стоит логически вынести в какие-то методы валидации
      * Если требования соблюдены, то происходит запись пользователя в базу
      */
-    @RequestMapping(value = "/user/registration", method = RequestMethod.POST)
+    @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public ModelAndView registration(@ModelAttribute("user") UserDTO userDTO){
         ModelAndView modelAndView = new ModelAndView();
         if(usersRepository.findByLogin(userDTO.getUsername()) != null){

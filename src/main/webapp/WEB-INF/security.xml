@@ -9,9 +9,15 @@
 
     <http name="userAndOrganizer" auto-config="true">
         <csrf disabled="true"/>
-        <intercept-url pattern="/admin**" access="hasAnyRole('ROLE_ADMIN')"/>
-        <form-login login-page="/Login.jsp" default-target-url="/router"/>
+        <intercept-url pattern="/registration" access="permitAll()"/>
+        <intercept-url pattern="/" access="permitAll()"/>
+        <intercept-url pattern="/admin**" access="hasRole('ROLE_ADMIN')"/>
+        <intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')"/>
+        <intercept-url pattern="/**" access="hasRole('ROLE_USER')"/>
+        <form-login login-processing-url="/login" login-page="/" authentication-failure-url="/forbidden" default-target-url="/router"/>
         <logout logout-url="/logout" logout-success-url="/"/>
+        <access-denied-handler error-page="/forbidden"/>
+
     </http>
 
     <beans:bean id="requestListener" class="org.springframework.web.context.request.RequestContextListener"/>

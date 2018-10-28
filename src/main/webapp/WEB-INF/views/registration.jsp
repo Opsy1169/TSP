@@ -13,10 +13,10 @@
 </head>
 <body>
 
-<form:form action="/user/registration" method="post" enctype="utf8" modelAttribute="user">
+<form:form action="/registration" method="post" enctype="utf8" modelAttribute="user">
     <div>
         <form:label path="username">Login</form:label>
-        <form:input path="" type="text" name="username"/>
+        <form:input path="username" type="text" name="username"/>
     </div>
     <div>
         <form:label path="password">Password</form:label>

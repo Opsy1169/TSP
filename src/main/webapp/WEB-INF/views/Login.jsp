@@ -26,7 +26,7 @@
         </form>
     </div>
     <div>
-        <a href="/user/registration">registrtion</a>
+        <a href="/registration">registrtion</a>
     </div>
 </body>
 </html>
