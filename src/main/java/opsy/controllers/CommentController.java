@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -101,12 +102,17 @@ public class CommentController {
      * Отрабатывает при нажатии на какую-то из статей
      */
     @RequestMapping(value="/article{id}", method = RequestMethod.GET)
-    public ModelAndView article(@PathVariable("id") int id, HttpServletResponse response) throws IOException {
+    public ModelAndView article(@PathVariable("id") int id, HttpServletResponse response) throws Exception {
 
-        ModelAndView modelAndView = new ModelAndView("fullarticle");
+        ModelAndView modelAndView = new ModelAndView();
         Articles article = articlesRepository.findByArticleId(id);
-        modelAndView.addObject("article", article);
+        if(article == null){
+            throw new Exception("No such article found");
+        }
         List<Comments> list = commentsRepository.findAllByArticle(id);
+
+        modelAndView.setViewName("fullarticle");
+        modelAndView.addObject("article", article);
         modelAndView.addObject("comments", list);
         return modelAndView;
     }
@@ -202,4 +208,35 @@ public class CommentController {
         return modelAndView;
 
     }
+
+    @RequestMapping(value = "adminuserslist", method = RequestMethod.GET)
+    public ModelAndView listOfUsers(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("userslist");
+        List<Users> users = usersRepository.findAll();
+        modelAndView.addObject("users", users);
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/userprofile{id}", method = RequestMethod.GET)
+    public ModelAndView userProfile(@PathVariable("id") long id) throws Exception {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("userprofile");
+        Users users = usersRepository.findByUserId(id);
+        if(users == null){
+            throw new Exception("No such user found");
+        }
+        modelAndView.addObject("user", users);
+        List<Articles> articles = dao.getArticlesRepresentationByAuthor(users);
+        modelAndView.addObject("articles", articles);
+        return modelAndView;
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ModelAndView errorPage(Exception ex){
+        ModelAndView modelAndView = new ModelAndView("error");
+        modelAndView.addObject("errormsg", ex.getMessage());
+        return modelAndView;
+    }
+
 }

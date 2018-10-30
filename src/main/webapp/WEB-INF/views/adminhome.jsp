@@ -12,7 +12,14 @@
 </head>
 <body>
 <h1>Congrats you are admin best hu,an in the world</h1>
+<div>
 <a href="/articlelist">to the list of articles</a>
+</div>
+<div>
 <a href="/comments">to the comments</a>
+</div>
+<div>
+<a href="/adminuserslist">to the list of users</a>
+</div>
 </body>
 </html>
