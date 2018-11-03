@@ -14,7 +14,7 @@
 <body>
     <ul>
         <c:forEach var="article" items="${articles}">
-            <li> <a href="/article${article.articleId}">  ${article.title}       .${article.publishdate}</a> </li>
+            <li id="id${article.articleId}"> <a href="/article${article.articleId}">  ${article.title}       .${article.publishdate}</a> </li>
         </c:forEach>
     </ul>
 </body>

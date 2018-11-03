@@ -4,10 +4,14 @@ import opsy.data.ArticlesRepository;
 import opsy.data.CommentsRepository;
 import opsy.data.UsersRepository;
 import opsy.entities.*;
+import opsy.util.UtilStuff;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +20,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Controller
@@ -34,6 +41,11 @@ public class CommentController {
 
     @Autowired
     private UsersRepository usersRepository;
+
+    @Autowired
+    private UtilStuff utilStuff;
+
+    private long editableArticleId;
 
 
     /**
@@ -222,14 +234,93 @@ public class CommentController {
     public ModelAndView userProfile(@PathVariable("id") long id) throws Exception {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("userprofile");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
         Users users = usersRepository.findByUserId(id);
         if(users == null){
             throw new Exception("No such user found");
         }
         modelAndView.addObject("user", users);
+        modelAndView.addObject("auth", user);
         List<Articles> articles = dao.getArticlesRepresentationByAuthor(users);
         modelAndView.addObject("articles", articles);
         return modelAndView;
+    }
+
+    @RequestMapping(value = "/yourprofile", method = RequestMethod.GET)
+    public ModelAndView profile() {
+        ModelAndView modelAndView = new ModelAndView();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        Users users = usersRepository.findByLogin(user.getUsername());
+        modelAndView.setViewName("redirect:userprofile"+ users.getUserId());
+        return modelAndView;
+    }
+
+    //Чтобы отредактировать статью, нужно вместо новой статьи передать на форму ту самую статью, спринг сам все забиндит
+    //Только, наверное, нужно будет обратно заменять экранированные символы на исходные
+    @RequestMapping(value ="/createarticle", method = RequestMethod.GET)
+    public ModelAndView renderCreateArticle(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("createarticle");
+        modelAndView.addObject("article", new Articles());
+        return modelAndView;
+    }
+
+    @RequestMapping(value ="/createarticle", method = RequestMethod.POST)
+    public ModelAndView createArticle(@ModelAttribute("article") Articles articles){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User object = (User) authentication.getPrincipal();
+        String login = object.getUsername();
+        Users user = usersRepository.findByLogin(login);
+        articles.setAuthor(user);
+        java.sql.Date sqlDate = new java.sql.Date(new java.util.Date().getTime());
+        articles.setPublishdate(sqlDate);
+        articles.setArticleBody(utilStuff.replaceTags(articles.getArticleBody()));
+        articlesRepository.save(articles);
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("redirect:article" + articles.getArticleId());
+
+        return modelAndView;
+    }
+
+    @RequestMapping(value ="/editarticle{id}", method = RequestMethod.GET)
+    public ModelAndView renderEditArticle(@PathVariable("id") long id){
+        ModelAndView modelAndView = new ModelAndView();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        Articles articles = articlesRepository.findByArticleId(id);
+        articles.setArticleBody(utilStuff.replaceBackToTags(articles.getArticleBody()));
+        if(!articles.getAuthor().getLogin().equals(user.getUsername())) {
+            modelAndView.setViewName("redirect:forbidden");
+            return modelAndView;
+        }
+        setEditableArticleId(id);
+        modelAndView.setViewName("editarticle");
+        modelAndView.addObject("article", articles);
+        return modelAndView;
+    }
+
+    @RequestMapping(value ="/editarticle", method = RequestMethod.POST)
+    public ModelAndView editArticle(@ModelAttribute("article") Articles articles){
+        Articles dbarticle = articlesRepository.findByArticleId(getEditableArticleId());
+        dbarticle.setArticleBody(utilStuff.replaceTags(articles.getArticleBody()));
+        dbarticle.setTitle(articles.getTitle());
+        //articlesRepository.updateArticle(articles.getArticleBody(), articles.getTitle(), articles.getArticleId());
+        articlesRepository.save(dbarticle);
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("redirect:article" + dbarticle.getArticleId());
+
+        return modelAndView;
+    }
+
+    public void setEditableArticleId(Long id){
+        this.editableArticleId = id;
+    }
+    public long getEditableArticleId(){
+        return editableArticleId;
     }
 
     @ExceptionHandler(Exception.class)
