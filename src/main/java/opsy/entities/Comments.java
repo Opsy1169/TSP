@@ -12,8 +12,6 @@ public class Comments {
     private Users authorId;
     private Date date;
     private int article;
-
-
     @Id
     @Column(name = "comment_id")
     public long getCommentId() {
