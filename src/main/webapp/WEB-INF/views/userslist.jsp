@@ -9,16 +9,70 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <title>List of users</title>
 </head>
+<%--<script>--%>
+    <%--$(document).ready(function () {--%>
+        <%--$("p").click(function () {--%>
+            <%--$(this).text("not asd")--%>
+        <%--});--%>
+    <%--});--%>
+<%--</script>--%>
+<script type="text/javascript">
+    $(document).ready(function () {
+    function doAjax(id) {
+        alert(id);
+        divid = 'div' + id;
+        $('#').parent().hide();
+
+    };
+
+    $("button").click(function () {
+        div = $(this).parent("div");
+        console.log(div.attr("id"));
+        $.ajax({
+            url: '/deleteuser',
+            data: ({id: $(this).attr("id")}),
+            type: "GET",
+            // accepts: "text/html; charset=UTF-8",
+        })
+            .done(function( data){
+                div.remove();
+                alert(data);
+            })
+            .fail(function(jqXHR, exception) {
+                alert("something went wrong");
+            });
+
+        // $.ajax({
+        //     url: '/ajaxTest',
+        //     data: ({body: $("textarea").val()}),
+        //     success: function (data) {
+        //         Callback(data)
+        //     }})
+
+    });
+
+    function Callback(data){
+        $("ul").prepend('<li>' + data + "</li>");
+    }
+    });
+</script>
 <body>
 
 <h1>List of users</h1>
 
     <c:forEach var="user" items="${users}">
-       <p><a href="/userprofile${user.userId}">Login ${user.login}</a> </p>
-        <p>Admin ${user.isadmin}</p>
-        <hr>
+        <div id="user${user.userId}">
+            <p><a href="/userprofile${user.userId}">Login ${user.login}</a> </p>
+            <p>Admin ${user.isadmin}</p>
+            <c:if test="${!user.isadmin}">
+                <button id="${user.userId}" >delete user</button>
+            </c:if>
+            <hr>
+        </div>
+
     </c:forEach>
 
 

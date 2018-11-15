@@ -15,6 +15,7 @@ public class Comments {
 
     @Id
     @Column(name = "comment_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long getCommentId() {
         return commentId;
     }

@@ -6,6 +6,8 @@ import opsy.data.UsersRepository;
 import opsy.entities.*;
 import opsy.util.UtilStuff;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -85,12 +87,17 @@ public class CommentController {
      * В принципе общая логика поменяться не должна
      * Можно использовать как примеры для будущих аджакс-запросов
      */
-    @RequestMapping(value = "/ajaxTest", method = RequestMethod.GET, produces = {"text/html; charset=UTF-8"})
-    public @ResponseBody String ajaxTest(@RequestParam String body){
+    @RequestMapping(value = "/addcomment", method = RequestMethod.POST, produces = {"text/html; charset=UTF-8"})
+    public @ResponseBody String ajaxTest(@RequestParam String body, @RequestParam String user, @RequestParam String article){
         Comments comment = new Comments();
+        comment.setArticle(Integer.valueOf(article));
+        comment.setAuthorId(usersRepository.findByLogin(user));
         comment.setBody(body);
-        dao.insertComment(comment);
-        return body;
+        java.sql.Date sqlDate = new java.sql.Date(new java.util.Date().getTime());
+        comment.setDate(sqlDate);
+        commentsRepository.save(comment);
+
+        return sqlDate.toString();
     }
 
 
@@ -124,8 +131,12 @@ public class CommentController {
         List<Comments> list = commentsRepository.findAllByArticle(id);
 
         modelAndView.setViewName("fullarticle");
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users activeUser = null;
+        activeUser = usersRepository.findByLogin(user.getUsername());
         modelAndView.addObject("article", article);
         modelAndView.addObject("comments", list);
+        modelAndView.addObject("user", activeUser);
         return modelAndView;
     }
 
@@ -314,6 +325,21 @@ public class CommentController {
         modelAndView.setViewName("redirect:article" + dbarticle.getArticleId());
 
         return modelAndView;
+    }
+
+    @RequestMapping(value = "/deleteuser", method = RequestMethod.GET, produces = {"text/html; charset=UTF-8"})
+    @ResponseBody
+    public ResponseEntity<Object> deleteUser(@RequestParam String id){
+
+        long lid = Long.valueOf(id);
+        Users userForDelete = usersRepository.findByUserId(lid);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users activeUser = usersRepository.findByLogin(user.getUsername());
+        if(userForDelete == null || !activeUser.getIsadmin())
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        dao.deleteUser(lid);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+
     }
 
     public void setEditableArticleId(Long id){
