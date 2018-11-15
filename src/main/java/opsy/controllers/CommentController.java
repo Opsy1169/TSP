@@ -105,6 +105,7 @@ public class CommentController {
         List<Articles> articles = dao.getArticlesRepresentation();
         modelAndView.addObject("articles", articles);
 
+
         return modelAndView;
     }
 
