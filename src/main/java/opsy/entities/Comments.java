@@ -2,6 +2,9 @@ package opsy.entities;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Objects;
 
 @Entity
@@ -12,8 +15,11 @@ public class Comments {
     private Users authorId;
     private Date date;
     private int article;
+    private Timestamp time;
+    private String formatTime;
     @Id
     @Column(name = "comment_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long getCommentId() {
         return commentId;
     }
@@ -71,6 +77,26 @@ public class Comments {
     public void setArticle(int article) {
         this.article = article;
     }
+
+    @Basic
+    @Column(name = "time")
+    public Timestamp getTime() {
+        return time;
+    }
+
+    public void setTime(Timestamp time) {
+        this.time = time;
+    }
+
+    @Basic
+    @Column(name = "string_format_time")
+    public String getFormatTime(){
+        return formatTime;
+    }
+
+    public void setFormatTime(String formatTime){ this.formatTime = formatTime;}
+
+
 
     @Override
     public boolean equals(Object o) {

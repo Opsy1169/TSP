@@ -201,9 +201,15 @@ public class DAO {
      */
     @Transactional
     public void deleteArticle(long articleId){
+        //Articles articles = articlesRepository.findByArticleId(articleId);
         commentsRepository.deleteAllByArticle((int) articleId);
-        articlesRepository.deleteById((int) articleId);
+        articlesRepository.deleteByArticleId(articleId);
     }
+
+//    @Transactional
+//    public void delete(long articleId){
+//        articlesRepository.deleteByArticleId(articleId);
+//    }
 
 
     /**

@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
  * Просто вспомогательный объект, чтобы не ебаться лишний раз
  */
 public class UserDTO {
-    @NotNull
+//    @NotNull
     private String username;
-    @NotNull
+//    @NotNull
     private String password;
-    @NotNull
+//    @NotNull
     private String confirmPass;
 
     public String getPassword() {

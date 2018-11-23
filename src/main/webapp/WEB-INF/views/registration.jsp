@@ -13,18 +13,21 @@
 </head>
 <body>
 
-<form:form action="/registration" method="post" enctype="utf8" modelAttribute="user">
+<form:form action="/registration" method="post" enctype="utf8" modelAttribute="userdto">
     <div>
         <form:label path="username">Login</form:label>
         <form:input path="username" type="text" name="username"/>
+        <form:errors path="username" />
     </div>
     <div>
         <form:label path="password">Password</form:label>
         <form:input  path="password" type="password" name="password"/>
+        <form:errors path="password"/>
     </div>
     <div>
         <form:label path="confirmPass">confirm password</form:label>
         <form:input path="confirmPass" type="password" name="confirmPass"/>
+        <form:errors path="confirmPass"/>
     </div>
     <input type="submit" value="submit">
 </form:form>

@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "users", schema = "workingschema")
+@Table(name = "users", schema = "workingschema", catalog = "blog")
 public class Users {
 
 
@@ -14,15 +14,6 @@ public class Users {
     private Boolean isadmin;
     private Boolean ismoder;
 
-    public Users(String login, String password, Boolean isadmin, Boolean ismoder) {
-        this.login = login;
-        this.password = password;
-        this.isadmin = isadmin;
-        this.ismoder = ismoder;
-    }
-    public Users() {
-
-    }
 
     @Id
     @Column(name = "user_id")

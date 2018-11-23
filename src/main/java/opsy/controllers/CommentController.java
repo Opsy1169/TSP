@@ -15,12 +15,17 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -45,7 +50,30 @@ public class CommentController {
     @Autowired
     private UtilStuff utilStuff;
 
+    @Autowired
+    UserDTOValidator userDTOValidator;
+
+//    @Autowired
+//    UserValidator userValidator;
+
+
+    /**
+     * Как выяснилось для нормальной работы этой беды нужно параметром в аннотацию
+     * передать имя, под которым объект передается и принимается на/со страницы
+     * Иначе он будет проверять все объекты, и падать, потому что метод саппорт в валидаторе
+     * настроен только на один класс
+     * Таким образом принимается соглашение относительно того, как должна именоваться сущность UserDTO
+     * при передаче и приеме ее в качестве параметра на страницу
+     */
+    @InitBinder("userdto")
+    private void initBinder(WebDataBinder binder) {
+        binder.setValidator( userDTOValidator);
+    }
+
     private long editableArticleId;
+
+    private Users autenticatedUser; //Записать сразу залогиненного пользователя сюда и обращаться сюда, а не каждый раз к базе
+                                    //Контролить состояние переменной при логине/логауте
 
 
     /**
@@ -103,6 +131,9 @@ public class CommentController {
 
         ModelAndView modelAndView = new ModelAndView("articles");
         List<Articles> articles = dao.getArticlesRepresentation();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users activeUser = usersRepository.findByLogin(user.getUsername());
+        modelAndView.addObject("user", activeUser);
         modelAndView.addObject("articles", articles);
 
 
@@ -123,6 +154,9 @@ public class CommentController {
             throw new Exception("No such article found");
         }
         List<Comments> list = commentsRepository.findAllByArticle(id);
+        list.sort((Comments c1, Comments c2)-> {
+            return -c1.getTime().compareTo(c2.getTime());
+        });
 
         modelAndView.setViewName("fullarticle");
         modelAndView.addObject("article", article);
@@ -136,10 +170,12 @@ public class CommentController {
      * Например, url /login и /logout зарезервированы и отрабаываются контейнером
      */
     @RequestMapping(value="/", method = RequestMethod.GET)
-    public ModelAndView login(HttpServletResponse response) throws IOException {
+    public ModelAndView login(@RequestParam(value = "error", required = false) String error) throws IOException {
 
         ModelAndView modelAndView = new ModelAndView("Login");
-
+        if(error != null){
+            modelAndView.addObject("error", "No such user found");
+        }
         return modelAndView;
     }
 
@@ -151,7 +187,7 @@ public class CommentController {
         ModelAndView modelAndView = new ModelAndView();
         UserDTO userDTO = new UserDTO();
         modelAndView.setViewName("registration");
-        modelAndView.addObject("user", userDTO);
+        modelAndView.addObject("userdto", userDTO);
 
         return modelAndView;
     }
@@ -163,19 +199,21 @@ public class CommentController {
      * Если требования соблюдены, то происходит запись пользователя в базу
      */
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public ModelAndView registration(@ModelAttribute("user") UserDTO userDTO){
+    public ModelAndView registration(@ModelAttribute("userdto") @Validated UserDTO userDTO, BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView();
-        if(usersRepository.findByLogin(userDTO.getUsername()) != null){
-            modelAndView.setViewName("registration");
-            return modelAndView;
-        }
-        if(!userDTO.getPassword().equals(userDTO.getConfirmPass())) {
+        if(bindingResult.hasErrors()){
             modelAndView.setViewName("registration");
             return modelAndView;
         }
 
-        Users user = new Users(userDTO.getUsername(), bCryptPasswordEncoder.encode(userDTO.getPassword()), false, false);
-        usersRepository.save(user);
+
+        Users user = new Users();
+        user.setLogin(userDTO.getUsername());
+        user.setPassword(userDTO.getPassword());
+        user.setIsadmin(false);
+        user.setIsmoder(false);
+        //usersRepository.save(user);
+        usersRepository.rawSave(user.getLogin(),  user.getPassword(), user.getIsmoder(), user.getIsadmin());
         modelAndView.setViewName("Login");
         return modelAndView;
     }
@@ -187,6 +225,7 @@ public class CommentController {
      */
     @RequestMapping(value = "/router", method = RequestMethod.GET)
     public ModelAndView route(HttpServletResponse response){
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         ModelAndView modelAndView = new ModelAndView();
 //        dao.deleteUser(8);System.out.println(articlesRepository.findByArticleId(2));
@@ -265,6 +304,7 @@ public class CommentController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("createarticle");
         modelAndView.addObject("article", new Articles());
+        modelAndView.addObject("isNew", true);
         return modelAndView;
     }
 
@@ -276,6 +316,7 @@ public class CommentController {
         Users user = usersRepository.findByLogin(login);
         articles.setAuthor(user);
         java.sql.Date sqlDate = new java.sql.Date(new java.util.Date().getTime());
+
         articles.setPublishdate(sqlDate);
         articles.setArticleBody(utilStuff.replaceTags(articles.getArticleBody()));
         articlesRepository.save(articles);
@@ -298,8 +339,9 @@ public class CommentController {
             return modelAndView;
         }
         setEditableArticleId(id);
-        modelAndView.setViewName("editarticle");
+        modelAndView.setViewName("createarticle");
         modelAndView.addObject("article", articles);
+        modelAndView.addObject("isNew", false);
         return modelAndView;
     }
 
@@ -328,6 +370,7 @@ public class CommentController {
     public ModelAndView errorPage(Exception ex){
         ModelAndView modelAndView = new ModelAndView("error");
         modelAndView.addObject("errormsg", ex.getMessage());
+        ex.printStackTrace();
         return modelAndView;
     }
 

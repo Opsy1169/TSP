@@ -41,9 +41,9 @@
                         + "<div>"
                         + " <p>" +  body +"</p>"
                         + "<hr></div> ";
-                    console.log(comment)
-                    commentssection.prepend(comment)
-                    $("#text-area").text("");
+                    console.log(comment);
+                    commentssection.prepend(comment);
+                    $("#text-area").val("");
                 })
                 .fail(function () {
                     alert("error");
@@ -81,11 +81,13 @@
             <div id="comment-section" style="width: 700px; background-color: darkslategray">
             <div >
                 <p>${comment.authorId.login }</p>
-                <p>${comment.date}</p>
+                <p>${comment.formatTime}</p>
             </div>
                 <div >
                 <p> ${comment.body}</p>
-            </li>
+                </div>
+                <hr>
+            </div>
         </c:forEach>
 </div>
 

@@ -14,7 +14,8 @@
         <intercept-url pattern="/admin**" access="hasRole('ROLE_ADMIN')"/>
         <intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')"/>
         <intercept-url pattern="/**" access="hasRole('ROLE_USER')"/>
-        <form-login login-processing-url="/login" login-page="/" authentication-failure-url="/forbidden" default-target-url="/router"/>
+        <form-login login-processing-url="/login" login-page="/" authentication-failure-url="/?error=true" default-target-url="/router"
+        />
         <logout logout-url="/logout" logout-success-url="/"/>
         <access-denied-handler error-page="/forbidden"/>
 

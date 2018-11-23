@@ -19,6 +19,7 @@
 </head>
 <body>
     <div>
+        ${error}
         <form action="/login" method="post">
             <input id="logininput" type="text" name="username" required>
             <input id="passwordinput" type="password" name="password" required>

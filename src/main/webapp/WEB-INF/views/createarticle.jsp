@@ -13,7 +13,7 @@
 </head>
 <body>
 <h1>Pishi svoyu ebuchuyu stat`u</h1>
-<form:form action="/createarticle" method="post" modelAttribute="article" enctype="utf-8">
+<form:form action="${isNew ? \"createarticle\" : \"editarticle\"}" method="post" modelAttribute="article" enctype="utf-8">
     <table>
         <tr>
             <td><form:label path="title" title="title"/></td>
