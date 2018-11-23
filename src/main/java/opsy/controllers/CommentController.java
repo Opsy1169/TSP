@@ -6,6 +6,7 @@ import opsy.data.UsersRepository;
 import opsy.entities.*;
 import opsy.util.UtilStuff;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -122,10 +123,13 @@ public class CommentController {
         comment.setAuthorId(usersRepository.findByLogin(user));
         comment.setBody(body);
         java.sql.Date sqlDate = new java.sql.Date(new java.util.Date().getTime());
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        comment.setTime(timestamp);
+        comment.setFormatTime(new SimpleDateFormat("yyyy.MM.dd HH:mm").format(timestamp));
         comment.setDate(sqlDate);
         commentsRepository.save(comment);
 
-        return sqlDate.toString();
+        return comment.getFormatTime();
     }
 
 
@@ -382,6 +386,23 @@ public class CommentController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         dao.deleteUser(lid);
         return ResponseEntity.status(HttpStatus.OK).body(null);
+
+    }
+
+    @RequestMapping(value = "/deletearticle", method = RequestMethod.GET, produces = {"text/html; charset=UTF-8"})
+    @ResponseBody
+    public ResponseEntity<Object> deleteArticle(@RequestParam String id){
+
+        long lid = Long.valueOf(id);
+        Articles article = articlesRepository.findByArticleId(lid);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users activeUser = usersRepository.findByLogin(user.getUsername());
+        if(article == null || (!activeUser.getIsadmin() && !activeUser.equals(article.getAuthor()))) {
+//            ResponseEntity entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("sheiiit");
+        }
+        dao.deleteArticle(lid);
+        return ResponseEntity.status(HttpStatus.OK).body("success");
 
     }
 
