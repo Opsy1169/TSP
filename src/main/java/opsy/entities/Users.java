@@ -4,17 +4,20 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "users", schema = "workingschema")
+@Table(name = "users", schema = "workingschema", catalog = "blog")
 public class Users {
+
+
     private long userId;
     private String login;
     private String password;
     private Boolean isadmin;
     private Boolean ismoder;
 
+
     @Id
     @Column(name = "user_id")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long getUserId() {
         return userId;
     }

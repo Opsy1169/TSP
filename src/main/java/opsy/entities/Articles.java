@@ -2,16 +2,32 @@ package opsy.entities;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "articles", schema = "workingschema")
+@Table(name = "articles", schema = "workingschema", catalog = "blog")
 public class Articles {
     private long articleId;
     private String title;
     private Date publishdate;
     private Users author;
     private String articleBody;
+
+
+
+
+    @Override
+    public String toString() {
+        return "Articles{" +
+                "articleId=" + articleId +
+                ", title='" + title + '\'' +
+                ", publishdate=" + publishdate +
+                ", author=" + author +
+                ", articleBody='" + articleBody + '\'' +
+                '}';
+    }
+
 
     @Id
     @Column(name = "article_id")
@@ -44,7 +60,7 @@ public class Articles {
         this.publishdate = publishdate;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "author")
     public Users getAuthor() {
         return author;
@@ -62,17 +78,6 @@ public class Articles {
 
     public void setArticleBody(String articleBody) {
         this.articleBody = articleBody;
-    }
-
-    @Override
-    public String toString() {
-        return "Articles{" +
-                "articleId=" + articleId +
-                ", title='" + title + '\'' +
-                ", publishdate=" + publishdate +
-                ", author=" + author +
-                ", articleBody='" + articleBody + '\'' +
-                '}';
     }
 
     @Override

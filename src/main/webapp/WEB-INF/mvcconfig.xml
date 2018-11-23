@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:beans="http://www.springframework.org/schema/context"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+
+
+    <mvc:annotation-driven/>
+    <mvc:resources mapping ="/resources/**" location="/"/>
+    <mvc:view-controller path="/adminhome" view-name="adminhome"/>
+    <mvc:view-controller path="/usershome" view-name="usershome"/>
+    <mvc:view-controller path="/restricted" view-name="restricted"/>
+    <context:component-scan base-package="opsy"/>
+    <beans>
+        <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+            <property name="suffix" value=".jsp"/>
+            <property name="prefix" value="WEB-INF/views/"/>
+        </bean>
+
+        <bean id="messageSource"
+              class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
+              p:basename="/WEB-INF/messages"
+                p:defaultEncoding="UTF-8"/>
+
+
+    </beans>
+
+</beans>

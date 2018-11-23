@@ -1,29 +1,22 @@
 package opsy.entities;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Objects;
 
 @Entity
-@Table(name = "comments", schema = "workingschema")
+@Table(name = "comments", schema = "workingschema", catalog = "blog")
 public class Comments {
     private long commentId;
     private String body;
     private Users authorId;
     private Date date;
-    private long article;
-
-    @Override
-    public String toString() {
-        return "Comments{" +
-                "commentId=" + commentId +
-                ", body='" + body + '\'' +
-                ", authorId=" + authorId +
-                ", date=" + date +
-                ", article=" + article +
-                '}';
-    }
-
+    private int article;
+    private Timestamp time;
+    private String formatTime;
     @Id
     @Column(name = "comment_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,7 +38,17 @@ public class Comments {
         this.body = body;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @Override
+    public String toString() {
+        return "Comments{" +
+                "commentId=" + commentId +
+                ", body='" + body + '\'' +
+                ", authorId=" + authorId +
+                ", date=" + date +
+                '}';
+    }
+
+    @ManyToOne
     @JoinColumn(name = "author_id")
     public Users getAuthorId() {
         return authorId;
@@ -56,28 +59,60 @@ public class Comments {
     }
 
     @Basic
+    @Column(name = "date")
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    @Basic
     @Column(name = "article")
-    public long getArticle() {
+    public int getArticle() {
         return article;
     }
 
-    public void setArticle(long authorId) {
+    public void setArticle(int article) {
         this.article = article;
     }
+
+    @Basic
+    @Column(name = "time")
+    public Timestamp getTime() {
+        return time;
+    }
+
+    public void setTime(Timestamp time) {
+        this.time = time;
+    }
+
+    @Basic
+    @Column(name = "string_format_time")
+    public String getFormatTime(){
+        return formatTime;
+    }
+
+    public void setFormatTime(String formatTime){ this.formatTime = formatTime;}
+
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Comments comments = (Comments) o;
-        return commentId == comments.commentId &&
-                authorId == comments.authorId &&
-                Objects.equals(body, comments.body);
+        Comments Comments = (Comments) o;
+        return commentId == Comments.commentId &&
+                authorId == Comments.authorId &&
+                article == Comments.article &&
+                Objects.equals(body, Comments.body) &&
+                Objects.equals(date, Comments.date);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(commentId, body, authorId);
+        return Objects.hash(commentId, body, authorId, date, article);
     }
 }

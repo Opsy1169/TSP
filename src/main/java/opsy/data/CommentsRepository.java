@@ -1,15 +1,15 @@
 package opsy.data;
 
-import opsy.entities.Comments;
 import opsy.entities.Users;
-import opsy.entities.aComments;
+import opsy.entities.Comments;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface CommentsRepository extends CrudRepository<aComments, Integer> {
+public interface CommentsRepository extends CrudRepository<Comments, Integer> {
 
-    List<aComments> findAll();
-    List<aComments> findAllByAuthorId(Users users);
-    List<aComments> findAllByArticle(int articleId);
+    List<Comments> findAll();
+    List<Comments> findAllByAuthorId(Users users);
+    List<Comments> findAllByArticle(int articleId);
+    void deleteAllByArticle(int article);
 }
