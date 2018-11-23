@@ -224,7 +224,7 @@ public class CommentController {
 
         Users user = new Users();
         user.setLogin(userDTO.getUsername());
-        user.setPassword(userDTO.getPassword());
+        user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
         user.setIsadmin(false);
         user.setIsmoder(false);
         //usersRepository.save(user);
