@@ -1,10 +1,14 @@
 package opsy.controllers;
 
 import opsy.data.ArticlesRepository;
+import opsy.data.CategoriesRepository;
 import opsy.data.CommentsRepository;
 import opsy.data.UsersRepository;
 import opsy.entities.*;
 import opsy.util.UtilStuff;
+import opsy.validators.ArticleValidator;
+import opsy.validators.UserDTOValidator;
+import opsy.validators.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -24,13 +28,16 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.jws.WebParam;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -45,6 +52,9 @@ public class CommentController {
     private CommentsRepository commentsRepository;
 
     @Autowired
+    private CategoriesRepository categoriesRepository;
+
+    @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
@@ -53,8 +63,11 @@ public class CommentController {
     @Autowired
     private UtilStuff utilStuff;
 
-    @Autowired
-    UserDTOValidator userDTOValidator;
+//    @Autowired
+//    UserDTOValidator userDTOValidator;
+//
+//    @Autowired
+//    ArticleValidator articleValidator;
 
 //    @Autowired
 //    UserValidator userValidator;
@@ -68,10 +81,17 @@ public class CommentController {
      * Таким образом принимается соглашение относительно того, как должна именоваться сущность UserDTO
      * при передаче и приеме ее в качестве параметра на страницу
      */
-    @InitBinder("userdto")
-    private void initBinder(WebDataBinder binder) {
-        binder.setValidator( userDTOValidator);
-    }
+//    @InitBinder("userdto")
+//    private void initUserBinder(WebDataBinder binder) {
+//        binder.setValidator( userDTOValidator);
+//    }
+//
+//    @InitBinder("article")
+//    private void initArticleBinder(WebDataBinder binder) {
+//        binder.setValidator( articleValidator);
+//    }
+
+
 
     private long editableArticleId;
 
@@ -90,7 +110,11 @@ public class CommentController {
         usersRepository.save(users);
     }
 
-
+    private User getAuthUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        return user;
+    }
     /**
      * Отрисовывает страницу с комментариями
      */
@@ -98,14 +122,13 @@ public class CommentController {
     public ModelAndView test(HttpServletResponse response) throws IOException {
 
         ModelAndView modelAndView = new ModelAndView("comments");
-//        List<shit> comments =  dao.getAllComments();
         List<Comments> comments =  commentsRepository.findAll();
+        comments.sort((Comments c1, Comments c2)-> {
+            return -c1.getTime().compareTo(c2.getTime());
+        });
         modelAndView.addObject("comments", comments);
-//        Model model = (Model) modelAndView.getModel();
-        String s = "heyhey another param";
-        modelAndView.addObject("string", s);
-        System.out.println(bCryptPasswordEncoder.encode("1234"));
-//        model.addAttribute("string", s);
+
+
 
         return modelAndView;
     }
@@ -116,11 +139,12 @@ public class CommentController {
      * В принципе общая логика поменяться не должна
      * Можно использовать как примеры для будущих аджакс-запросов
      */
-    @RequestMapping(value = "/addcomment", method = RequestMethod.POST, produces = {"text/html; charset=UTF-8"})
-    public @ResponseBody String ajaxTest(@RequestParam String body, @RequestParam String user, @RequestParam String article){
+    @RequestMapping(value = "/addcomment", method = RequestMethod.POST)
+    public @ResponseBody CommentDTO ajaxTest(@RequestParam String body, @RequestParam String user, @RequestParam String article){
         Comments comment = new Comments();
         comment.setArticle(Integer.valueOf(article));
         comment.setAuthorId(usersRepository.findByLogin(user));
+        body = utilStuff.replaceTags(body);
         comment.setBody(body);
         java.sql.Date sqlDate = new java.sql.Date(new java.util.Date().getTime());
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -128,9 +152,38 @@ public class CommentController {
         comment.setFormatTime(new SimpleDateFormat("yyyy.MM.dd HH:mm").format(timestamp));
         comment.setDate(sqlDate);
         commentsRepository.save(comment);
-
-        return comment.getFormatTime();
+        CommentDTO commentDTO = new CommentDTO();
+        commentDTO.setBody(body);
+        commentDTO.setTime(comment.getFormatTime());
+        return commentDTO;
     }
+
+
+
+//    @RequestMapping(value = "/savearticle", method = RequestMethod.POST)
+//    public ModelAndView saveArticle(@RequestParam String title, @RequestParam String body, @RequestParam String category){
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        User object = (User) authentication.getPrincipal();
+//        Articles articles = new Articles();
+//        String login = object.getUsername();
+//        Users user = usersRepository.findByLogin(login);
+//        articles.setTitle(title);
+//        articles.setArticleBody(utilStuff.replaceTags(body));
+//        articles.setCategories(categoriesRepository.findByCategory(category));
+//        articles.setAuthor(user);
+//        java.sql.Date sqlDate = new java.sql.Date(new java.util.Date().getTime());
+//        articles.setCategories(categoriesRepository.findByCategory(articles.getStringCategory()));
+//        System.out.println(articles.getStringCategory());
+//
+//        articles.setPublishdate(sqlDate);
+//        articles.setArticleBody(utilStuff.replaceTags(articles.getArticleBody()));
+//        articlesRepository.save(articles);
+//        ModelAndView modelAndView = new ModelAndView();
+//        modelAndView.setViewName("redirect:article" + articles.getArticleId());
+//        return modelAndView;
+//    }
+
+
 
 
     /**
@@ -187,11 +240,21 @@ public class CommentController {
     @RequestMapping(value="/", method = RequestMethod.GET)
     public ModelAndView login(@RequestParam(value = "error", required = false) String error) throws IOException {
 
-        ModelAndView modelAndView = new ModelAndView("Login");
-        if(error != null){
-            modelAndView.addObject("error", "No such user found");
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            User user = (User) authentication.getPrincipal();
+            ModelAndView modelAndView = new ModelAndView("redirect:router");
+            return modelAndView;
         }
-        return modelAndView;
+        catch (Exception ex){
+            ModelAndView modelAndView = new ModelAndView("Login");
+            if(error != null){
+                modelAndView.addObject("error", "Wrong username or password");
+            }
+            return modelAndView;
+        }
+
+
     }
 
     /**
@@ -231,6 +294,15 @@ public class CommentController {
         usersRepository.rawSave(user.getLogin(),  user.getPassword(), user.getIsmoder(), user.getIsadmin());
         modelAndView.setViewName("Login");
         return modelAndView;
+    }
+
+    @RequestMapping(value = "/checkexistance", method = RequestMethod.POST)
+    public @ResponseBody Boolean checkValidLogin(@RequestParam String login){
+        Users users = usersRepository.findByLogin(login);
+        boolean exists = false;
+        if(users != null)
+            exists = true;
+        return exists;
     }
 
     /**
@@ -282,6 +354,9 @@ public class CommentController {
         modelAndView.setViewName("userslist");
         List<Users> users = usersRepository.findAll();
         modelAndView.addObject("users", users);
+
+        User currentuser =  getAuthUser();
+        modelAndView.addObject("authuser", currentuser);
         return modelAndView;
     }
 
@@ -314,32 +389,117 @@ public class CommentController {
 
     //Чтобы отредактировать статью, нужно вместо новой статьи передать на форму ту самую статью, спринг сам все забиндит
     //Только, наверное, нужно будет обратно заменять экранированные символы на исходные
+//    @RequestMapping(value ="/createarticle", method = RequestMethod.GET)
+//    public ModelAndView renderCreateArticle(ModelAndView mnv){
+//        if(!mnv.getModel().containsKey("article")){
+//            mnv.addObject("article", new Articles());
+//            mnv.addObject("isNew", true);
+//            List<Categories> categories = (List<Categories>)categoriesRepository.findAll();
+//            List<String> onlyNames = new ArrayList<>();
+//            categories.forEach((category) -> onlyNames.add(category.getCategory()));
+//            mnv.addObject("categories", onlyNames);
+//
+//        }
+//        //ModelAndView modelAndView = new ModelAndView();
+//
+//        //modelAndView.setViewName("createarticle");
+//        //mnv.addObject(mnv.getModel().get("article"));
+//        mnv.setViewName("createarticle");
+//        //modelAndView.addObject("isNew", true);
+//
+//        //modelAndView.addObject("categories", onlyNames);
+//
+//        return mnv;
+//    }
+
+
+    /**
+     * попробовать сделать пост-редирект-гет через model, пока ниче не получается
+     */
+//    @RequestMapping(value ="/createarticle1", method = RequestMethod.POST)
+//    public ModelAndView createArticle(@ModelAttribute("article") @Validated Articles articles, BindingResult bindingResult,
+//                                      RedirectAttributes redirectAttributes){
+//        ModelAndView modelAndView = new ModelAndView();
+//        if(bindingResult.hasErrors()){
+//            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingRsult.article", bindingResult);
+//            redirectAttributes.addFlashAttribute("article", articles);
+//            modelAndView.setViewName("redirect:createarticle");
+//            return modelAndView;
+//        }
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        User object = (User) authentication.getPrincipal();
+//        String login = object.getUsername();
+//        Users user = usersRepository.findByLogin(login);
+//        articles.setAuthor(user);
+//        java.sql.Date sqlDate = new java.sql.Date(new java.util.Date().getTime());
+//        articles.setCategories(categoriesRepository.findByCategory(articles.getStringCategory()));
+//        System.out.println(articles.getStringCategory());
+//
+//        articles.setPublishdate(sqlDate);
+//        articles.setArticleBody(utilStuff.replaceTags(articles.getArticleBody()));
+//        articlesRepository.save(articles);
+//
+//
+//        modelAndView.setViewName("redirect:article" + articles.getArticleId());
+//
+//        return modelAndView;
+//    }
+
     @RequestMapping(value ="/createarticle", method = RequestMethod.GET)
-    public ModelAndView renderCreateArticle(){
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("createarticle");
-        modelAndView.addObject("article", new Articles());
-        modelAndView.addObject("isNew", true);
-        return modelAndView;
+    public String renderCreateArticle(Model model){
+        if(!model.containsAttribute("article")){
+            model.addAttribute("article", new Articles());
+            model.addAttribute("isNew", true);
+
+
+        }
+        List<Categories> categories = (List<Categories>)categoriesRepository.findAll();
+        List<String> onlyNames = new ArrayList<>();
+        categories.forEach((category) -> onlyNames.add(category.getCategory()));
+        model.addAttribute("categories", onlyNames);
+        //ModelAndView modelAndView = new ModelAndView();
+
+        //modelAndView.setViewName("createarticle");
+        //mnv.addObject(mnv.getModel().get("article"));
+        return "createarticle";
+        //modelAndView.addObject("isNew", true);
+
+        //modelAndView.addObject("categories", onlyNames);
+
+
     }
 
-    @RequestMapping(value ="/createarticle", method = RequestMethod.POST)
-    public ModelAndView createArticle(@ModelAttribute("article") Articles articles){
+    @RequestMapping(value ="/createarticle1", method = RequestMethod.POST)
+    public String createArticle(@ModelAttribute("article") @Validated Articles articles, BindingResult bindingResult,
+                                      RedirectAttributes redirectAttributes, Model model){
+//        if(bindingResult.hasErrors()){
+//            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.article", bindingResult);
+//            redirectAttributes.addFlashAttribute("article", articles);
+//            redirectAttributes.addFlashAttribute("isNew", true);
+//            List<Categories> categories = (List<Categories>)categoriesRepository.findAll();
+//            List<String> onlyNames = new ArrayList<>();
+//            categories.forEach((category) -> onlyNames.add(category.getCategory()));
+//            redirectAttributes.addFlashAttribute("categories", onlyNames);
+//            //modelAndView.setViewName("redirect:createarticle");
+//            return "redirect:createarticle";
+//        }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User object = (User) authentication.getPrincipal();
         String login = object.getUsername();
         Users user = usersRepository.findByLogin(login);
         articles.setAuthor(user);
         java.sql.Date sqlDate = new java.sql.Date(new java.util.Date().getTime());
+        articles.setCategories(categoriesRepository.findByCategory(articles.getStringCategory()));
+        System.out.println(articles.getStringCategory());
 
         articles.setPublishdate(sqlDate);
         articles.setArticleBody(utilStuff.replaceTags(articles.getArticleBody()));
         articlesRepository.save(articles);
 
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("redirect:article" + articles.getArticleId());
 
-        return modelAndView;
+        return "redirect:article" + articles.getArticleId();
+
+
     }
 
     @RequestMapping(value ="/editarticle{id}", method = RequestMethod.GET)
@@ -348,27 +508,37 @@ public class CommentController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         Articles articles = articlesRepository.findByArticleId(id);
-        articles.setArticleBody(utilStuff.replaceBackToTags(articles.getArticleBody()));
         if(!articles.getAuthor().getLogin().equals(user.getUsername())) {
             modelAndView.setViewName("redirect:forbidden");
             return modelAndView;
         }
+        articles.setArticleBody(utilStuff.replaceBackToTags(articles.getArticleBody()));
+        articles.setStringCategory(articles.getCategories().getCategory());
+        List<Categories> categories = (List<Categories>)categoriesRepository.findAll();
+        List<String> onlyNames = new ArrayList<>();
+        categories.forEach((category) -> onlyNames.add(category.getCategory()));
         setEditableArticleId(id);
         modelAndView.setViewName("createarticle");
         modelAndView.addObject("article", articles);
         modelAndView.addObject("isNew", false);
+        modelAndView.addObject("categories", onlyNames);
         return modelAndView;
     }
 
     @RequestMapping(value ="/editarticle", method = RequestMethod.POST)
-    public ModelAndView editArticle(@ModelAttribute("article") Articles articles){
+    public ModelAndView editArticle(@ModelAttribute("article") @Validated Articles articles, BindingResult bindingResult){
+        ModelAndView modelAndView = new ModelAndView();
+        if(bindingResult.hasErrors()){
+            modelAndView.setViewName("createarticle");
+            return modelAndView;
+        }
         Articles dbarticle = articlesRepository.findByArticleId(getEditableArticleId());
         dbarticle.setArticleBody(utilStuff.replaceTags(articles.getArticleBody()));
         dbarticle.setTitle(articles.getTitle());
         //articlesRepository.updateArticle(articles.getArticleBody(), articles.getTitle(), articles.getArticleId());
         articlesRepository.save(dbarticle);
 
-        ModelAndView modelAndView = new ModelAndView();
+
         modelAndView.setViewName("redirect:article" + dbarticle.getArticleId());
 
         return modelAndView;

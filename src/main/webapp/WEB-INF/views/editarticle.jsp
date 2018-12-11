@@ -12,8 +12,9 @@
     <title>Edit Article</title>
 </head>
 <body>
+<%@include file="/WEB-INF/views/headerexample.jsp" %>
 <h1>Pishi svoyu ebuchuyu stat`u</h1>
-<form:form action="/editarticle" method="post" modelAttribute="article" enctype="utf-8">
+<form:form action="/editarticle" method="post" enctype="utf-8">
     <table>
         <tr>
             <%--<td><form:input path="articleId" type="number" disabled="true"/> </td>--%>

@@ -12,6 +12,9 @@ public class UtilStuff {
         articleBody = articleBody.replaceAll("</form", "&lt;/form");
         articleBody = articleBody.replaceAll("</script", "&lt;/script");
         articleBody = articleBody.replaceAll("<input", "&lt;input");
+        articleBody = articleBody.replaceAll("<html", "&lt;html");
+        articleBody = articleBody.replaceAll("<body", "&lt;body");
+        articleBody = articleBody.replaceAll("<title", "&lt;title");
         return articleBody;
     }
 

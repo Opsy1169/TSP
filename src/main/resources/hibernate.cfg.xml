@@ -14,7 +14,8 @@
     <mapping class="opsy.entities.Articles"/>
     <!--<mapping resource="/opsy/entities/Articles.hbm.xml"/>-->
     <mapping class="opsy.entities.Comments"/>
-      <!--<mapping resource="/opsy/entities/Comments.hbm.xml"/>-->
+    <mapping class="opsy.entities.Categories"/>
+    <!--<mapping resource="/opsy/entities/Comments.hbm.xml"/>-->
 
       <!-- <property name="connection.username"/> -->
     <!-- <property name="connection.password"/> -->

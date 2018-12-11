@@ -12,6 +12,7 @@
     <title>User Profile</title>
 </head>
 <body>
+<%@include file="/WEB-INF/views/headerexample.jsp" %>
 <h1>${user.login}`s profile!</h1>
 
 <table>

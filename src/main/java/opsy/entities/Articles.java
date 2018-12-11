@@ -13,9 +13,17 @@ public class Articles {
     private Date publishdate;
     private Users author;
     private String articleBody;
+    private Categories categories;
+    private String stringCategory;
 
+    @Transient
+    public String getStringCategory() {
+        return stringCategory;
+    }
 
-
+    public void setStringCategory(String stringCategory) {
+        this.stringCategory = stringCategory;
+    }
 
     @Override
     public String toString() {
@@ -68,6 +76,16 @@ public class Articles {
 
     public void setAuthor(Users author) {
         this.author = author;
+    }
+
+    @ManyToOne()
+    @JoinColumn(name = "category")
+    public Categories getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Categories categories) {
+        this.categories = categories;
     }
 
     @Basic

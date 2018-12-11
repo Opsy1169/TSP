@@ -9,7 +9,7 @@
 
 
     <mvc:annotation-driven/>
-    <mvc:resources mapping ="/resources/**" location="/"/>
+    <mvc:resources mapping ="/resources/**" location="/resources/"/>
     <mvc:view-controller path="/adminhome" view-name="adminhome"/>
     <mvc:view-controller path="/usershome" view-name="usershome"/>
     <mvc:view-controller path="/restricted" view-name="restricted"/>

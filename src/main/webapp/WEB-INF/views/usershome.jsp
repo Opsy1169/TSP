@@ -11,6 +11,7 @@
     <title>Users home</title>
 </head>
 <body>
+<%@include file="/WEB-INF/views/headerexample.jsp" %>
 <h1>Hey you are common user but its ok</h1>
 <a href="/comments">to comments</a>
 <a href="/articlelist">to the list of articles</a>
