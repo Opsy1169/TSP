@@ -31,7 +31,7 @@ public interface UsersRepository extends CrudRepository<Users, Integer> {
      * @param isAdmin
      */
     @Modifying
-    @Query(value = "insert into workingschema.users (login, password, isadmin, ismoder) VALUES (?1, ?2, ?3, ?4)", nativeQuery = true)
+    @Query(value = "insert into users (login, password, isadmin, ismoder) VALUES (?1, ?2, ?3, ?4)", nativeQuery = true)
     void rawSave(String login, String password, boolean isModer, boolean isAdmin);
 
 

@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "comments", schema = "workingschema")
+@Table(name = "comments")
 public class shit {
     private long commentId;
     private String body;

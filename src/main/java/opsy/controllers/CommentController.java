@@ -107,7 +107,8 @@ public class CommentController {
         Users users = new Users();
         users.setLogin("admin");
         users.setPassword(bCryptPasswordEncoder.encode("password"));
-        usersRepository.save(users);
+        //users.save();
+         usersRepository.save(users);
     }
 
     private User getAuthUser(){
@@ -290,7 +291,7 @@ public class CommentController {
         user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
         user.setIsadmin(false);
         user.setIsmoder(false);
-        //usersRepository.save(user);
+        // usersRepository.save(user);
         usersRepository.rawSave(user.getLogin(),  user.getPassword(), user.getIsmoder(), user.getIsadmin());
         modelAndView.setViewName("Login");
         return modelAndView;

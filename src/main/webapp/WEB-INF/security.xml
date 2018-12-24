@@ -9,6 +9,8 @@
 
     <http name="userAndOrganizer" auto-config="true">
         <csrf disabled="true"/>
+        <intercept-url pattern="/resources**" access="permitAll()"/>
+        <intercept-url pattern="/resources/**" access="permitAll()"/>
         <intercept-url pattern="/registration" access="permitAll()"/>
         <intercept-url pattern="/" access="permitAll()"/>
         <intercept-url pattern="/checkexistance" access="permitAll()"/>
@@ -34,5 +36,4 @@
     <beans:bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
 
     </beans:bean>
-
 </beans:beans>

@@ -9,7 +9,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <%@include file="/WEB-INF/views/libs.jsp" %>
     <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
     <script>
         $(document).ready(function () {
@@ -23,7 +23,7 @@
             $("button").click(function () {
                 var link = $(this);
                 var lielem = $(this).parent().parent().parent();
-                if(confirm("Вы действительно хотите удалить статью?")){
+                if(true){
                 $.ajax({
                     url: '/deletearticle',
                     data:{id: $(this).attr("data-id")},
@@ -71,11 +71,11 @@
 
 <div id="holder">
     <input type="text" class="search"/>
-    <button class="sort" data-sort="author">Sort by author</button>
-    <button class="sort" data-sort="date">Sort by date</button>
+    <button class="sort btn btn-secondary" data-sort="author">Sort by author</button>
+    <button class="sort btn btn-secondary" data-sort="date">Sort by date</button>
     <ul class="list" style="list-style-type: none">
         <c:forEach var="article" items="${articles}">
-            <li style="background-color: #40a070; border-radius: 25px">
+            <li class="list-group-item">
                 <div id = "${article.articleId}" style =" color: black; display: inline" >
                     <p class="id" hidden="true">${article.articleId}</p>
                     <p class="title"><a  href="/article${article.articleId}">${article.title} </a></p>
@@ -83,7 +83,7 @@
                     <p class="category">${article.stringCategory}</p>
                     <c:if test="${user.isadmin}">
                        <p>
-                            <button id="but" data-id = "${article.articleId}">delete article</button>
+                            <button id="but" class="btn btn-primary" data-id = "${article.articleId}">delete article</button>
                        </p>
                     </c:if>
                 </div>

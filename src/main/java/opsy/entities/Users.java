@@ -4,20 +4,32 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "users", schema = "workingschema", catalog = "blog")
+@Table(name = "users", catalog = "blog")
 public class Users {
-
-
-    private long userId;
-    private String login;
-    private String password;
-    private Boolean isadmin;
-    private Boolean ismoder;
-
 
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long userId;
+
+    @Basic
+    @Column(name = "login")
+    private String login;
+
+    @Basic
+    @Column(name = "password")
+    private String password;
+
+    @Basic
+    @Column(name = "isadmin")
+    private Boolean isadmin;
+    
+    @Basic
+    @Column(name = "ismoder")
+    private Boolean ismoder;
+
+
+
     public long getUserId() {
         return userId;
     }
@@ -26,8 +38,6 @@ public class Users {
         this.userId = userId;
     }
 
-    @Basic
-    @Column(name = "login")
     public String getLogin() {
         return login;
     }
@@ -36,8 +46,6 @@ public class Users {
         this.login = login;
     }
 
-    @Basic
-    @Column(name = "password")
     public String getPassword() {
         return password;
     }
@@ -46,8 +54,6 @@ public class Users {
         this.password = password;
     }
 
-    @Basic
-    @Column(name = "isadmin")
     public Boolean getIsadmin() {
         return isadmin;
     }
@@ -56,8 +62,7 @@ public class Users {
         this.isadmin = isadmin;
     }
 
-    @Basic
-    @Column(name = "ismoder")
+
     public Boolean getIsmoder() {
         return ismoder;
     }

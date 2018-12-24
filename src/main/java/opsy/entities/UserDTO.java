@@ -1,7 +1,7 @@
 package opsy.entities;
 
 
-import com.sun.istack.internal.NotNull;
+
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 
@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
  * Просто вспомогательный объект, чтобы не ебаться лишний раз
  */
 public class UserDTO {
-//    @NotNull
+
     private String username;
-//    @NotNull
+
     private String password;
-//    @NotNull
+
     private String confirmPass;
 
     public String getPassword() {

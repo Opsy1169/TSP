@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Objects;
 
 @Entity
-@Table(name = "comments", schema = "workingschema", catalog = "blog")
+@Table(name = "comments", catalog = "blog")
 public class Comments {
     private long commentId;
     private String body;

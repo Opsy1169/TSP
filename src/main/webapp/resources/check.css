@@ -4,3 +4,10 @@ h2{
 .proverka{
     color: gray;
 }
+
+body{
+    display: block;
+    margin-left: auto;
+    margin-right: auto
+}
+

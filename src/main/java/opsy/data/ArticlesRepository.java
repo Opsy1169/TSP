@@ -25,7 +25,7 @@ public interface ArticlesRepository extends CrudRepository<Articles, Integer> {
     void deleteAllByAuthor(Users users);
 
     @Modifying
-    @Query(value = "update workingschema.articles set article_body = ?0, title = ?1 where article_id = ?2", nativeQuery = true)
+    @Query(value = "update articles set article_body = ?0, title = ?1 where article_id = ?2", nativeQuery = true)
     void updateArticle( String body,  String title,  long id);
 
     List<Articles> findAllByCategories(Categories categories);
