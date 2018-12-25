@@ -10,4 +10,5 @@ public interface CategoriesRepository extends CrudRepository<Categories, Integer
 
     List<Categories> findAll();
     Categories findByCategory(String category);
+    Categories findById(Long id);
 }

@@ -149,7 +149,7 @@ public class CommentController {
         java.sql.Date sqlDate = new java.sql.Date(new java.util.Date().getTime());
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         comment.setTime(timestamp);
-        comment.setFormatTime(new SimpleDateFormat("yyyy.MM.dd HH:mm").format(timestamp));
+        comment.setFormatTime(new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(timestamp));
         comment.setDate(sqlDate);
         commentsRepository.save(comment);
         CommentDTO commentDTO = new CommentDTO();
@@ -195,6 +195,9 @@ public class CommentController {
 
         ModelAndView modelAndView = new ModelAndView("articles");
         List<Articles> articles = dao.getArticlesRepresentation();
+        for (Articles article:  articles) {
+            article.setStringCategory(categoriesRepository.findById(article.getCategories().getId()).getCategory());
+        }
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Users activeUser = usersRepository.findByLogin(user.getUsername());
         modelAndView.addObject("user", activeUser);
@@ -203,6 +206,8 @@ public class CommentController {
 
         return modelAndView;
     }
+
+
 
 
     /**
@@ -226,9 +231,27 @@ public class CommentController {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Users activeUser = null;
         activeUser = usersRepository.findByLogin(user.getUsername());
+        article.setStringCategory(categoriesRepository.findById(article.getCategories().getId()).getCategory());
         modelAndView.addObject("article", article);
         modelAndView.addObject("comments", list);
         modelAndView.addObject("user", activeUser);
+        return modelAndView;
+    }
+
+    @RequestMapping(value="selectcat", method = RequestMethod.GET)
+    public ModelAndView article(@RequestParam("cat") String cat) throws Exception {
+
+        ModelAndView modelAndView = new ModelAndView("articles");
+        List<Articles> articles = dao.getArticlesRepresentationByCat(categoriesRepository.findByCategory(cat));
+//        for (Articles article:  articles) {
+//            article.setStringCategory(categoriesRepository.findById(article.getCategories().getId()).getCategory());
+//        }
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users activeUser = usersRepository.findByLogin(user.getUsername());
+        modelAndView.addObject("user", activeUser);
+        modelAndView.addObject("articles", articles);
+
+
         return modelAndView;
     }
 

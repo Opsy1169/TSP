@@ -51,6 +51,7 @@
                     console.log(a);
                     itemContainer.add(a);
                     itemContainer.sort("time", {alphabet: ":-0123456789", order: "desc"});
+                    $("#stub").css("display", "none");
                     //старый скрипт, раскомментить, если новая версия будет работать неправильно
                     // var commentssection = $("#comment-section");
                     // var comment =  "<div style=\"background-color: darkslategray\"> "
@@ -76,6 +77,7 @@
         <h1>an article</h1>
 
         <h2>${article.title}</h2>
+        <h2>${article.stringCategory}</h2>
 
         <h2>${article.author.login}</h2>
 
@@ -97,6 +99,16 @@
 </div>
 <div id="holder">
     <ul class="list" style="list-style-type: none">
+        <c:if test="${empty(comments)}">
+        <li id = "stub" style=" background-color: #40a070; border-radius: 25px">
+            <div style =" color: black">
+                <p class="new" hidden="true">0</p>
+                <p class="author">stub</p>
+                <p class="time">123123123</p>
+                <p class="body">asdasdasd</p>
+            </div>
+        </li>
+        </c:if>
         <c:forEach var="comment" items="${comments}">
             <li style="background-color: #40a070; border-radius: 25px">
                 <div style =" color: black">

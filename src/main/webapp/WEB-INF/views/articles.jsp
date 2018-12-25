@@ -80,7 +80,7 @@
                     <p class="id" hidden="true">${article.articleId}</p>
                     <p class="title"><a  href="/article${article.articleId}">${article.title} </a></p>
                     <p class="date">${article.publishdate}</p>
-                    <p class="category">${article.stringCategory}</p>
+                    <p class="category">${article.categories.category}</p>
                     <c:if test="${user.isadmin}">
                        <p>
                             <button id="but" data-id = "${article.articleId}">delete article</button>

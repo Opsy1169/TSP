@@ -51,6 +51,7 @@ public class DAO {
         projectionList.add(Projections.property("title"), "title");
         projectionList.add(Projections.property("author"), "author");
         projectionList.add(Projections.property("publishdate"), "publishdate");
+        projectionList.add(Projections.property("categories"), "categories");
 
     }
 
@@ -147,6 +148,13 @@ public class DAO {
     public List<Articles> getArticlesRepresentationByAuthor(Users author){
         DetachedCriteria criteria = DetachedCriteria.forClass(Articles.class, "a");
         criteria.add(Restrictions.eq("author", author));
+        createAliases(criteria);
+        List<Articles> articles = createArticlesList(criteria);
+        return articles;
+    }
+    public List<Articles> getArticlesRepresentationByCat(Categories categoria){
+        DetachedCriteria criteria = DetachedCriteria.forClass(Articles.class, "a");
+        criteria.add(Restrictions.eq("categories", categoria));
         createAliases(criteria);
         List<Articles> articles = createArticlesList(criteria);
         return articles;
