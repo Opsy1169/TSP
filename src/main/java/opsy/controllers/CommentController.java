@@ -150,7 +150,7 @@ public class CommentController {
         java.sql.Date sqlDate = new java.sql.Date(new java.util.Date().getTime());
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         comment.setTime(timestamp);
-        comment.setFormatTime(new SimpleDateFormat("yyyy.MM.dd HH:mm").format(timestamp));
+        comment.setFormatTime(new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(timestamp));
         comment.setDate(sqlDate);
         commentsRepository.save(comment);
         CommentDTO commentDTO = new CommentDTO();
@@ -258,6 +258,23 @@ public class CommentController {
 
     }
 
+    @RequestMapping(value="selectcat", method = RequestMethod.GET)
+    public ModelAndView article(@RequestParam("cat") String cat) throws Exception {
+
+        ModelAndView modelAndView = new ModelAndView("articles");
+        List<Articles> articles = dao.getArticlesRepresentationByCat(categoriesRepository.findByCategory(cat));
+//        for (Articles article:  articles) {
+//            article.setStringCategory(categoriesRepository.findById(article.getCategories().getId()).getCategory());
+//        }
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users activeUser = usersRepository.findByLogin(user.getUsername());
+        modelAndView.addObject("user", activeUser);
+        modelAndView.addObject("articles", articles);
+
+
+        return modelAndView;
+}
+
     /**
      * Отрисовывает страницу регистрации
      */
@@ -349,7 +366,7 @@ public class CommentController {
 
     }
 
-    @RequestMapping(value = "adminuserslist", method = RequestMethod.GET)
+    @RequestMapping(value = "userslist", method = RequestMethod.GET)
     public ModelAndView listOfUsers(){
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("userslist");
@@ -357,7 +374,8 @@ public class CommentController {
         modelAndView.addObject("users", users);
 
         User currentuser =  getAuthUser();
-        modelAndView.addObject("authuser", currentuser);
+        Users authuser = usersRepository.findByLogin(currentuser.getUsername());
+        modelAndView.addObject("authuser", authuser);
         return modelAndView;
     }
 

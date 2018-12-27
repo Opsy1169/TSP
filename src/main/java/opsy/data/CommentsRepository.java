@@ -12,4 +12,5 @@ public interface CommentsRepository extends CrudRepository<Comments, Integer> {
     List<Comments> findAllByAuthorId(Users users);
     List<Comments> findAllByArticle(int articleId);
     void deleteAllByArticle(int article);
+    void deleteAllByAuthorId(Users users);
 }

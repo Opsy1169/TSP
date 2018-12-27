@@ -9,8 +9,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <title>Create Article</title>
+    <%@include file="/WEB-INF/views/libs.jsp" %>
+    <title>Редактор статьи</title>
 </head>
 <script>
     $(document).ready(function () {
@@ -25,7 +25,7 @@
                     inptitle.siblings('span').remove();
                     console.log("title empty");
                     var div = inptitle.parent("div");
-                    div.append("<span>empty</span>");
+                    div.append("<span color = 'red'>Пустое поле</span>");
                 }else{
                     inptitle.siblings('span').remove();
                 }
@@ -33,7 +33,7 @@
                     select.siblings('span').remove();
                     console.log("selct empty");
                     var div = select.parent("div");
-                    div.append("<span>empty</span>");
+                    div.append("<span color = 'red'>Пустое поле</span>");
                 }else{
                     select.siblings('span').remove();
                 }
@@ -42,7 +42,7 @@
                     textarea.siblings('span').remove();
                     console.log("area empty");
                     var div = textarea.parent("div");
-                    div.append("<span>empty</span>");
+                    div.append("<span color = 'red'>Пустое поле</span>");
                 }else{
                     textarea.siblings('span').remove();
                 }
@@ -56,31 +56,41 @@
 </script>
 <body>
 <%@include file="/WEB-INF/views/headerexample.jsp" %>
-<h1>Pishi svoyu ebuchuyu stat`u</h1>
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="col-md-7 no-float">
+                <h1 class="display-2">Статья</h1>
+        </div>
+    </div>
+    <div class="row justify-content-md-center">
 <form:form method="post" action="${isNew ? \"createarticle1\" : \"editarticle\"}"  modelAttribute="article"
            enctype="utf-8">
 
 
 
 
-    <div>
+    <div class="form-group">
         <form:label path="title" title="title"/>
-        <form:input path="title" id = "inputtitle" type="text" name="titlefield"/>
+        <form:input class="form-control" path="title" placeholder="Название статьи" id = "inputtitle" type="text" name="titlefield"/>
         <form:errors path="title"/>
     </div>
-    <div>
+    <div class="form-group">
         <form:label path="stringCategory" title="category"/>
         <form:select path="stringCategory" id = "inputselect" items="${categories}"/>
     </div>
 
-    <div>
+    <div class="form-group">
         <form:label path="articleBody" title="body"/>
-        <form:textarea path="articleBody" id = "inputtextarea" rows="20" cols="90"/>
+        <form:textarea class = "form-control" placeholder="Форматирование текста происходит при помощи html разметки" path="articleBody" id = "inputtextarea" rows="20" cols="90"/>
         <form:errors path="articleBody"/>
     </div>
 
-    <input id="subbut" type="submit"/>
+    <div class="form-group">
+    <button type="submit" id="subbut" class="btn btn-primary">Готово</button>
+    </div>
 
 </form:form>
+</div>
+</div>
 </body>
 </html>

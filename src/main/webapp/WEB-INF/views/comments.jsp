@@ -11,7 +11,8 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <html>
 <head>
-    <title>$Title$</title>
+    <title>Comments</title>
+    <%@include file="/WEB-INF/views/libs.jsp" %>
 </head>
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -33,9 +34,7 @@
 </head>
 
 <body>
-<p id="asd">asdasdasd</p>
-<h2 >asdasda</h2>
-<h4 >weqweqweqwe</h4>
+    <%@include file="/WEB-INF/views/headerexample.jsp" %>
 
 <%--<div class="holder"></div>--%>
     <%--<ul id="itemContainer">--%>
@@ -69,24 +68,37 @@
 
 <!-- Item container (doesn't need to be an UL) -->
     <!-- Items -->
-<div id="holder">
-    <input type="text" class="search"/>
-    <button class="sort" data-sort="author">Sort by author</button>
-    <button class="sort" data-sort="date">Sort by date</button>
+<div id="holder" class="container">
+        <div class="row justify-content-md-center">
+                <div class="col col-3">
+                        <h1 class="display-2">Comments</h1>
+                </div>
+            </div>
+            <div class="row justify-content-md-left">
+                    <div class="col col-8">
+    <input type="text" class="search" plac placeholder="Serch" />
+    <button class="sort btn btn-primary" data-sort="author">Sort by author</button>
+    <button class="sort btn btn-secondary" data-sort="date">Sort by date</button>
+                    </div>
+            </div>
+            <div class="row justify-content-md-left">
+                    <div class="col col-12">
 <ul class="list" style="list-style-type: none">
  <c:forEach var="comment" items="${comments}">
-     <li style="background-color: #40a070; border-radius: 25px">
+     <li class="list-group-item">
          <div style =" color: black">
              <p class="new" hidden="true">0</p>
          <p class="author">${comment.authorId.login}</p>
-         <p class="date">${comment.date}</p>
-         <p class="body">${comment.body}</p>
+         <p class="date font-italic">${comment.date}</p>
+         <p class="body font-weight-bolder">${comment.body}</p>
          </div>
      </li>
 
  </c:forEach>
 </ul>
     <ul class="pagination" style="display: inline-block"></ul>
+                    </div>
+            </div>
 </div>
 <script type="text/javascript">
     $(document).ready(function () {

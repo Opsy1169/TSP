@@ -9,10 +9,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
+    <%@include file="/WEB-INF/views/libs.jsp" %>
     <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
-    <title>Title</title>
+    <title>${article.title}</title>
 </head>
 <script>
     $(document).ready(function () {
@@ -51,6 +50,7 @@
                     console.log(a);
                     itemContainer.add(a);
                     itemContainer.sort("time", {alphabet: ":-0123456789", order: "desc"});
+                    $("#stub").css("display", "none");
                     //старый скрипт, раскомментить, если новая версия будет работать неправильно
                     // var commentssection = $("#comment-section");
                     // var comment =  "<div style=\"background-color: darkslategray\"> "
@@ -73,22 +73,37 @@
 </script>
 <body>
 <%@include file="/WEB-INF/views/headerexample.jsp" %>
-        <h1>an article</h1>
-
-        <h2>${article.title}</h2>
-
-        <h2>${article.author.login}</h2>
-
-        <div style="background-color: antiquewhite; width: 1000px">
-            ${article.articleBody}
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="col-md-7 no-float">
+        <h1 class="display-2">${article.title}</h1>
+            </div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-md-7 no-float">
+                <h2 class="display-2">Категория: ${article.categories.category}</h2>
+                    </div>
+                    </div>
+            <div class="row justify-content-md-center">
+                    <div class="col-md-7 no-float">
+                        <h2 class="display-5" >Автор: ${articles.categories.category}</h2>
+                        </div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-md-7 no-float">
+        <h6 class="display-4">${article.author.login}</h2>
         </div>
-
+        </div>
+        <div style="background-color: antiquewhite; width: 1000px">
+            <p class="lead">${article.articleBody}</p>
+        </div>
+        
 <c:if test="${ not empty user.login}">
     <div>
-        <textarea id="text-area" rows="5" cols="30"></textarea>
+        <textarea class = "form-control" id="text-area" rows="5" cols="30"></textarea>
     </div>
     <div>
-        <button  data-user = "${user.login}" data-article = "${article.articleId}" value="send" id="sub">send </button>
+        <button class="btn btn-primary" data-user = "${user.login}" data-article = "${article.articleId}" value="send" id="sub">Отправить </button>
     </div>
 </c:if>
 <div >
@@ -97,8 +112,18 @@
 </div>
 <div id="holder">
     <ul class="list" style="list-style-type: none">
+        <c:if test="${empty(comments)}">
+            <li class="list-group-item" id = "stub">
+                <div style =" color: black">
+                <p class="new" hidden="true">0</p>
+                <p  class="author"> </p>
+                <p  class="time"> </p>
+                <p  class="body"> </p>
+                </div>
+            </li>
+</c:if>
         <c:forEach var="comment" items="${comments}">
-            <li style="background-color: #40a070; border-radius: 25px">
+            <li class="list-group-item">
                 <div style =" color: black">
                     <p class="new" hidden="true">0</p>
                     <p class="author">${comment.authorId.login}</p>
@@ -131,7 +156,7 @@
         <%--</c:forEach>--%>
     <%--</ul>--%>
 <%--</div>--%>
-
+</div>
 </body>
 </html>
 

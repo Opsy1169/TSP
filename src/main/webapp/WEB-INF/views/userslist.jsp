@@ -9,9 +9,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <%@include file="/WEB-INF/views/libs.jsp" %>
     <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
-    <title>List of users</title>
+    <title>Авторы</title>
 </head>
 <%--<script>--%>
     <%--$(document).ready(function () {--%>
@@ -30,12 +30,10 @@
     // };
         var itemContainer = new List('holder', {
             valueNames: ['id', 'login', 'admin'],
-            page: 5,
-            pagination: true
 
         });
 
-    $("button").click(function () {
+    $(".dlbut").click(function () {
         if(confirm("Вы действительно хотите удалить пользователя?")) {
             button = $(this);
             var lielem = $(this).parent().parent().parent();
@@ -72,7 +70,7 @@
 </script>
 <body>
 <%@include file="/WEB-INF/views/headerexample.jsp" %>
-<h1>List of users</h1>
+
 
     <%--<c:forEach var="user" items="${users}">--%>
         <%--<div id="user${user.userId}">--%>
@@ -94,18 +92,27 @@
         <%--</div>--%>
 
     <%--</c:forEach>--%>
-<div id="holder">
+
+    <div id="holder" class="container">
+        <div class="row justify-content-md-center">
+                <div class="col col-3">
+                        <h1 class="display-2">Users</h1>
+                </div>
+            </div>   
+<div id="holder" class="row justify-content-md-left">
+        <div class="col col-12">
+            <div class="form-group">
     <input type="text" class="search"/>
+    </div>
     <ul class="list" style="list-style-type: none">
         <c:forEach var="user" items="${users}">
-            <li style="background-color: #40a070; border-radius: 25px">
+            <li class="list-group-item">
                 <div id = "${user.userId}" style =" color: black; display: inline" >
                     <p class="id" hidden="true">${user.userId}</p>
-                    <p class="login"><a href="/userprofile${user.userId}">Login ${user.login}</a></p>
-                    <p class="admin">${user.isadmin}</p>
-                    <c:if test="${!user.isadmin}">
+                    <p class="login"><a href="/userprofile${user.userId}">${user.login}</a></p>
+                    <c:if test="${!user.isadmin && authuser.isadmin}">
                         <p>
-                            <button id="but" data-id = "${user.userId}">delete user</button>
+                            <button id="but"  class="btn btn-primary dlbut" data-id = "${user.userId}">Удалить автора.</button>
                         </p>
                     </c:if>
                 </div>
@@ -113,7 +120,9 @@
 
         </c:forEach>
     </ul>
-    <ul class="pagination" style="display: inline-block"></ul>
+    <!-- <ul class="pagination" style="display: inline-block"></ul> -->
+</div>
+</div>
 </div>
 
 

@@ -9,10 +9,24 @@
 <html>
 <head>
     <title>Something went wrong</title>
+    <%@include file="/WEB-INF/views/libs.jsp" %>
 </head>
 <body>
-<h1> SORRY!</h1>
-<p>Sorry to tell you? but something went wrong with error message: ${errormsg}</p>
-<a href="/router">To the main page</a>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-7 no-float">
+                    <h1 class="display-2">Ошибка</h1>
+            </div>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col-md-7 no-float">
+                    <h1 class="display-2">Произошла непредвиденная ошибка, извините пожалуйста.</h1>
+            </div>
+        </div>
+        <div class="row">
+        <a href="/router" class="badge badge-primary">На главную</a>
+      </div>
+      </div>
+</div>
 </body>
 </html>

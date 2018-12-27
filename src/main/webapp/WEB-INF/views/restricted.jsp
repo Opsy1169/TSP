@@ -9,9 +9,24 @@
 <html>
 <head>
     <title>Restricted</title>
+    <%@include file="/WEB-INF/views/libs.jsp" %>
 </head>
 <body>
-<H1> пошел нахуй отсюда чмо</H1>
-<a href="/router">На главную</a>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-7 no-float">
+                    <h1 class="display-2">Вам сюда нельзя, пройдите по ссылке.</h1>
+            </div>
+        </div>
+        <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-7 no-float">
+                    <h1 class="display-2">Вам сюда нельзя, пройдите по ссылке.</h1>
+            </div>
+        </div>
+        <div class="row">
+            <a href="/router" class="badge badge-primary">На главную</a>
+          </div>
+        </div>
 </body>
 </html>

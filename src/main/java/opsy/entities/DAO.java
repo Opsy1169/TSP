@@ -51,6 +51,7 @@ public class DAO {
         projectionList.add(Projections.property("title"), "title");
         projectionList.add(Projections.property("author"), "author");
         projectionList.add(Projections.property("publishdate"), "publishdate");
+        projectionList.add(Projections.property("categories"), "categories");
 
     }
 
@@ -152,6 +153,14 @@ public class DAO {
         return articles;
     }
 
+    public List<Articles> getArticlesRepresentationByCat(Categories categoria){
+        DetachedCriteria criteria = DetachedCriteria.forClass(Articles.class, "a");
+        criteria.add(Restrictions.eq("categories", categoria));
+        createAliases(criteria);
+        List<Articles> articles = createArticlesList(criteria);
+        return articles;
+}
+
     /**
      * Метод для получения объекта статьи без тела по айди
      * По замыслу нужен для отрисовки списка статей и т.д.(чтобы не тащить объемное тело без надобности)
@@ -221,59 +230,12 @@ public class DAO {
      */
     @Transactional
     public void deleteUser(long id){
-        Users users = usersRepository.findByUserId(id);
-        List<Articles> articles = getArticlesRepresentationByAuthor(users);
-        for (Articles article: articles) {
-            commentsRepository.deleteAllByArticle((int) article.getArticleId());
-        }
-        articlesRepository.deleteAllByAuthor(users);
-        usersRepository.delete(users);
-//        SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
-//        Session session = sessionFactory.openSession();
-//        Query query = session.createSQLQuery("delete from workingschema.articles where author = ").addEntity(Articles.class);
-//        query.setParameter("id", 8);
-//        Query query1 = session.createQuery("from Users  u where userId = 8");
-        //Users users = usersRepository.findByUserId(8);
-//        Query query = session.createQuery("from Articles a where author = :author");
-//        query.setParameter("author", users);
-//        List<Articles> articles =  query.list();
-        //List<Articles> articles =  articlesRepository.findAllByAuthor(users);
-        //session.beginTransaction();
-//        for (Articles a : articles) {
-//            session.merge(a);
-//            session.delete(a);
-//        }
-        //query.executeUpdate();
-        //session.getTransaction().commit();
-//        Query query = session.createQuery("delete Articles where articleId = 5 ");
-//        query.setParameter("id", new Long(5));
-//        query.executeUpdate();
-//        SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
-//        Session session = sessionFactory.openSession();
-//        Users users = usersRepository.findByUserId(id);
-//        List<Articles> list = articlesRepository.findAllByAuthor(users);
-//        Transaction transaction = session.beginTransaction();
-//        Query query = session.createQuery("delete  Articles where author = :id ");
-//        query.setParameter("id", users);
-//        query.executeUpdate();
-//        for (Articles a :list) {
-//            Query query = session.createQuery("delete from Articles where articleId = :id ");
-//            query.setParameter("id", a.getArticleId());
-//            query.executeUpdate();
-//            session.delete(a);
-//        }
-//        transaction.commit();
-//
-//        Query query1 = session.createQuery("delete Articles  where articleId = 30 ");
-//
-//        query1.executeUpdate();
+    Users users = usersRepository.findByUserId(id);
+    List<Articles> articles = getArticlesRepresentationByAuthor(users);
+    commentsRepository.deleteAllByAuthorId(users);
+    articlesRepository.deleteAllByAuthor(users);
+    usersRepository.delete(users);
 
-//        for (Articles article : list) {
-//            articlesRepository.deleteByArticleId(article.getArticleId());
-//        }
-//        articlesRepository.deleteByArticleId(new Long(20));
-//        usersRepository.delete(users);
-//        articlesRepository.deleteByArticleId(4);
     }
 
 
